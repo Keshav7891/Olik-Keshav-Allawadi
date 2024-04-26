@@ -27,9 +27,85 @@ spring.jpa.hibernate.ddl-auto=update
 
 # Show SQL query in console
 spring.jpa.show-sql=false
+```
+
+## Schema
+
+#### users
+```
+                        Table "public.users"
+  Column  |          Type          | Collation | Nullable | Default 
+----------+------------------------+-----------+----------+---------
+ id       | uuid                   |           | not null | 
+ username | character varying(255) |           |          | 
+Indexes:
+    "users_pkey" PRIMARY KEY, btree (id)
+    "users_username_key" UNIQUE CONSTRAINT, btree (username)
+```
+
+#### Authors
+```
+                       Table "public.authors"
+  Column   |          Type          | Collation | Nullable | Default 
+-----------+------------------------+-----------+----------+---------
+ id        | uuid                   |           | not null | 
+ biography | character varying(255) |           |          | 
+ name      | character varying(255) |           |          | 
+Indexes:
+    "authors_pkey" PRIMARY KEY, btree (id)
+    "authors_name_key" UNIQUE CONSTRAINT, btree (name)
 
 ```
 
+#### Books
+````
+                            Table "public.books"
+      Column      |          Type          | Collation | Nullable | Default 
+------------------+------------------------+-----------+----------+---------
+ publication_year | integer                |           |          | 
+ author_id        | uuid                   |           |          | 
+ id               | uuid                   |           | not null | 
+ rental_id        | uuid                   |           |          | 
+ isbn             | character varying(255) |           |          | 
+ title            | character varying(255) |           |          | 
+Indexes:
+    "books_pkey" PRIMARY KEY, btree (id)
+    "books_title_key" UNIQUE CONSTRAINT, btree (title)
+
+````
+
+- rental_id - Belongs To Rentals
+- author_id - Belongs To Authors
+
+#### Rentals
+````
+                        Table "public.rentals"
+   Column    |          Type          | Collation | Nullable | Default 
+-------------+------------------------+-----------+----------+---------
+ rental_date | date                   |           |          | 
+ return_date | date                   |           |          | 
+ book_id     | uuid                   |           |          | 
+ id          | uuid                   |           | not null | 
+ renter_id   | uuid                   |           |          | 
+ status      | character varying(255) |           |          | 
+Indexes:
+    "rentals_pkey" PRIMARY KEY, btree (id)
+````
+
+- book_id - Belongs To Books
+- renter_id - Belongs To User
+- status - Can Be RENTED / RETURNED
+
+## Asumptions
+- All Book Title are unique
+- All Authors are unique
+- All username are unique
+- A author is required to create a book
+- A user is required to rent / return a book
+- While Renting a book, Rental Date is kept as current date
+- While Returning a book, Return Date of rental is updated to current date
+- All the validations must be applied before saving in DB
+- We keep track of rented/return books in rental DB
 
 ## Logic
 
@@ -37,6 +113,15 @@ spring.jpa.show-sql=false
 - Logic for creating a book is dependent on a created author.
 - Rent A BOOK : ![Untitled Diagram (1)](https://github.com/Keshav7891/Olik-Keshav-Allawadi/assets/66181614/9de1ae65-e13a-4112-a3e6-3ea2718c4a51)
 
+- Return A Book : ![Return drawio](https://github.com/Keshav7891/Olik-Keshav-Allawadi/assets/66181614/ff1c27ee-0e0a-4850-9207-1f106c4ac23c)
+
+- Get All Books Available To Rent : All the books Which are not assigned with Rental Id are available to rent.
+
+- Get All Books Rented : All the books assigned with rental Id are the ones rentad
+
+- Get Rented Book By a User : Get all the active rentals (Status : Rented) of a user and get the books from it.
+
+- Check Dues : Get All the Active Rentals of a user which are overdue return date and present date by 14 days.
 
 # Usage
 
