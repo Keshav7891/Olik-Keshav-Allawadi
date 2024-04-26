@@ -35,7 +35,7 @@ spring.jpa.show-sql=false
 
 - Logic for creating user, author are independent.
 - Logic for creating a book is dependent on a created author.
-- Rent A BOOK : 
+- Rent A BOOK : ![Untitled Diagram (1)](https://github.com/Keshav7891/Olik-Keshav-Allawadi/assets/66181614/9de1ae65-e13a-4112-a3e6-3ea2718c4a51)
 
 
 # Usage
